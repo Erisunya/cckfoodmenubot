@@ -53,7 +53,7 @@ public class LocationHandler {
 		messageText.append("Choose one of these stalls in " + callData + " to view its menu:");
 
 		// Implement logic to show stalls once location is selected
-		for (Stall stall : stallRepository.findByLocationName(callData)) {
+		for (Stall stall : stallRepository.findByLocationNameOrderByStallName(callData)) {
 			messageText.append("\n- " + stall.getStallName());
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());

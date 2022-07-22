@@ -52,7 +52,7 @@ public class MenuHandler {
 		/* Iterates over all locations in the locations database and
 		   creates and adds a new keyboard button for each location to
 		   the list of keyboard buttons */
-		for(Location location: locationRepository.findAll()) {
+		for(Location location: locationRepository.findAllByOrderByLocationName()) {
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(location.getLocationName());
 			button.setCallbackData("location: " + location.getLocationName());

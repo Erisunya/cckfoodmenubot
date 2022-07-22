@@ -49,7 +49,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 				} catch (TelegramApiException e) {
 					e.printStackTrace();
 				}
-			} else {
+			} else if(update.getCallbackQuery().getData().contains("stall")) {
 				String callData = update.getCallbackQuery().getData().substring(7);
 				if(photoRepository.findByStallName(callData).size() < 2) {
 					SendPhoto message = handler.handleStallUpdate(update);

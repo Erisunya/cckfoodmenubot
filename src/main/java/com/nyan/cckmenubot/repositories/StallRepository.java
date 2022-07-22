@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StallRepository extends JpaRepository<Stall, Integer>{
 	
-	List<Stall> findByLocationName(String locationName);
+	List<Stall> findByLocationNameOrderByStallName(String locationName);
 
 }
