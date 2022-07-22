@@ -23,14 +23,27 @@ public class MainHandler {
 	private LocationHandler locationHandler;
 	@Autowired
 	private StallHandler stallHandler;
+	@Autowired
+	private FeedbackHandler feedbackHandler;
 	private String messageText;
+	private Boolean feedbackMode = false;
 
 	public SendMessage handleTextUpdate(Update update) {
 		
 		messageText = update.getMessage().getText();
 		
+		if(feedbackMode && !Character.toString(messageText.charAt(0)).equals("/")) {
+			feedbackMode = false;
+			return feedbackHandler.receivedFeedback(update);
+		} else {
+			feedbackMode = false;
+		}
+		
 		if(messageText.equals("/start") || messageText.equals("/menu")){
 			return menuHandler.handleUpdate(update);
+		} else if (messageText.equals("/feedback")) {
+			feedbackMode = true;
+			return feedbackHandler.newFeedback(update);
 		}
 		
 		return null;

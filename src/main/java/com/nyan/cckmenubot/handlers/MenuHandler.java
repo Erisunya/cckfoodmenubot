@@ -29,6 +29,8 @@ public class MenuHandler {
 	
 	public SendMessage handleUpdate(Update update) {
 		
+		String updateMessage = "<i>You can now send your /feedback via the bot!\n\n</i>";
+		
 		if(update.getMessage().getFrom().getUserName() == null) {
 			log.info("User " + update.getMessage().getFrom().getFirstName() + " is accessing the bot!");
 		} else {
@@ -38,9 +40,9 @@ public class MenuHandler {
 		SendMessage message = new SendMessage();
 		message.setChatId(update.getMessage().getChatId());
 		if(update.getMessage().getText().equals("/start")) {
-			message.setText("Hello! Thanks for trying out CCK Menu Bot. Choose one of the following locations to view the stalls:");
+			message.setText(updateMessage + "Hello! Thanks for trying out CCK Menu Bot. Choose one of the following locations to view the stalls:");
 		} else if (update.getMessage().getText().equals("/menu")) {
-			message.setText("Choose one of the following locations to view the stalls:");
+			message.setText(updateMessage + "Welcome back! Choose one of the following locations to view the stalls:");
 		}
 		
 		InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
@@ -71,6 +73,7 @@ public class MenuHandler {
 		
 		markupInline.setKeyboard(rowsInline);
 		message.setReplyMarkup(markupInline);
+		message.setParseMode("HTML");
 		
 		return message;
 	}
