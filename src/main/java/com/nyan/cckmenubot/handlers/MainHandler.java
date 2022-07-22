@@ -44,9 +44,12 @@ public class MainHandler {
 		} else if (messageText.equals("/feedback")) {
 			feedbackMode = true;
 			return feedbackHandler.newFeedback(update);
+		}  else {
+			return new SendMessage().builder()
+					.text("Sorry, but I don't recognise what you just said :'(\n\nWhy not try pressing /menu instead?")
+					.chatId(update.getMessage().getChatId())
+					.build();
 		}
-		
-		return null;
 	}
 	
 	public EditMessageText handleLocationUpdate(Update update) {
