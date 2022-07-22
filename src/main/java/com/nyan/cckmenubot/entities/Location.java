@@ -17,7 +17,7 @@ import lombok.*;
 public class Location {
 	
 	@Id
-	private int location_id;
+	private int locationId;
 	@Column(name = "location_name")
 	private String locationName;
 	

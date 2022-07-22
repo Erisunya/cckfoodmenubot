@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Integer> {
-	
-//	List<Location> findByLocationNameByOrderByName(String locationName);
-	
+		
 	List<Location> findAllByOrderByLocationName();
 	
 }
