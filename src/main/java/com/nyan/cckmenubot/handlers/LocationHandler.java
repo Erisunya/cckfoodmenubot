@@ -32,8 +32,9 @@ public class LocationHandler {
 	private StallRepository stallRepository;
 
 	public EditMessageText handleUpdate(Update update) {
-
-		callData = update.getCallbackQuery().getData().substring(10);
+		
+		String[] callDataArray = update.getCallbackQuery().getData().split(";");
+		callData = callDataArray[1];
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 
@@ -57,7 +58,8 @@ public class LocationHandler {
 			messageText.append("\n- " + stall.getStallName());
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());
-			button.setCallbackData("stall: " + stall.getStallName());
+			// CallbackData is a String in the format "stall;(stall name)"
+			button.setCallbackData("stall;" + stall.getStallName());
 			
 			// Splits the buttons into rows of two
 			if(rowInline.size()>=2) {

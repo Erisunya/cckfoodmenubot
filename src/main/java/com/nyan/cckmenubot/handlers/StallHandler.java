@@ -37,7 +37,8 @@ public class StallHandler {
 	
 	public SendPhoto handleUpdate(Update update) {
 		
-		callData = update.getCallbackQuery().getData().substring(7);
+		String[] callDataArray = update.getCallbackQuery().getData().split(";");
+		callData = callDataArray[1];
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		
@@ -65,7 +66,8 @@ public class StallHandler {
 	
 	public SendMediaGroup handleUpdateMultiple(Update update) {
 		
-		callData = update.getCallbackQuery().getData().substring(7);
+		String[] callDataArray = update.getCallbackQuery().getData().split(";");
+		callData = callDataArray[1];
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		

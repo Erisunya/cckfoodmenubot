@@ -1,5 +1,6 @@
 package com.nyan.cckmenubot.bots;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.nyan.cckmenubot.config.BotConfig;
@@ -12,8 +13,10 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -28,6 +31,9 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 	private MainHandler handler;
 	@Autowired
 	private PhotoRepository photoRepository;
+	private boolean previousMenu = false;
+	private int previousMenuId;
+	private List<Integer> previousMenusId;
 	
 	@Override
 	public String getBotUsername() {
@@ -53,22 +59,34 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 					e.printStackTrace();
 				}
 			} else if(update.getCallbackQuery().getData().contains("stall")) {
-				String callData = update.getCallbackQuery().getData().substring(7);
+				String[] callDataArray = update.getCallbackQuery().getData().split(";");
+				String callData = callDataArray[1];
 				if(photoRepository.findByStallName(callData).size() < 2) {
 					SendPhoto message = handler.handleStallUpdate(update);
 					try {
-						execute(message);
+						Message sentMessage = execute(message);
+						deleteMenus(update);
+						previousMenuId = sentMessage.getMessageId();
+						previousMenu = true;
 					} catch (TelegramApiException e) {
 						e.printStackTrace();
 					}
 				} else {
 					SendMediaGroup message = handler.handleStallUpdateMultiple(update);
 					try {
-						execute(message);
+						List<Message> sentMessages = execute(message);
+						deleteMenus(update);
+						previousMenusId = new ArrayList<>();
+						for(Message msg: sentMessages) {
+							System.out.println(msg.getMessageId());
+							previousMenusId.add(msg.getMessageId());
+						}
+						previousMenu = true;
 					} catch (TelegramApiException e) {
 						e.printStackTrace();
 					}
 				}
+				
 			}
 			
 		} else if(update.hasMessage() && update.getMessage().hasText()) {
@@ -94,6 +112,33 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 		System.out.println("Update processed!");
 	}
 
+	public void deleteMenus(Update update) {
+		if(previousMenu) {
+			try {
+				DeleteMessage deleteMessage = new DeleteMessage().builder()
+																.chatId(update.getCallbackQuery().getMessage().getChatId())
+																.messageId(previousMenuId)
+																.build();
+				execute(deleteMessage);
+			} catch (Exception e) {
+				
+			}
+			
+			try {
+				for(Integer messageId: previousMenusId) {
+					DeleteMessage deleteMessage = new DeleteMessage().builder()
+																.chatId(update.getCallbackQuery().getMessage().getChatId())
+																.messageId(messageId)
+																.build();
+					
+					execute(deleteMessage);
+				}
+			} catch (Exception e) {
 
+			}
+			
+			previousMenu = false;
+		}
+	}
 
 }
