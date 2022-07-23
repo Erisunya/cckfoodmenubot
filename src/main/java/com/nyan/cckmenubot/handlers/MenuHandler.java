@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nyan.cckmenubot.entities.Location;
+import com.nyan.cckmenubot.repositories.DevUpdateRepository;
 import com.nyan.cckmenubot.repositories.LocationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,12 @@ public class MenuHandler {
 	
 	@Autowired
 	private LocationRepository locationRepository;
+	@Autowired
+	private DevUpdateRepository devUpdateRepository;
 	
 	public SendMessage handleUpdate(Update update) {
 		
-		String updateMessage = "<i>You can now send your /feedback via the bot!\n\n</i>";
-		
-		if(update.getMessage().getFrom().getUserName() == null) {
-			log.info("User " + update.getMessage().getFrom().getFirstName() + " is accessing the bot!");
-		} else {
-			log.info("@" + update.getMessage().getFrom().getUserName() + " is accessing the bot!");
-		}
+		String updateMessage = devUpdateRepository.findFirstByOrderByFeedbackIdDesc().getDevUpdate();
 		
 		SendMessage message = new SendMessage();
 		message.setChatId(update.getMessage().getChatId());

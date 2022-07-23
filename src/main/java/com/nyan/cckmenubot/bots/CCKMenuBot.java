@@ -47,10 +47,17 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 	
 	@Override
 	public void onUpdateReceived(Update update) {
-		// SendMessage message = mainHandler.handleUpdate(update);
 		System.out.println("Update received!");
-				
+		
+		// Case if user clicked on any button
 		if (update.hasCallbackQuery()) {
+			
+			if(update.getCallbackQuery().getMessage().getFrom().getUserName() == null) {
+				log.info("User " + update.getCallbackQuery().getFrom().getFirstName() + " has pressed a button!");
+			} else {
+				log.info("@" + update.getCallbackQuery().getFrom().getUserName() + " has pressed a button!");
+			}
+			
 			if(update.getCallbackQuery().getData().contains("location")) {
 				EditMessageText message = handler.handleLocationUpdate(update);
 				try {
@@ -78,7 +85,6 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 						deleteMenus(update);
 						previousMenusId = new ArrayList<>();
 						for(Message msg: sentMessages) {
-							System.out.println(msg.getMessageId());
 							previousMenusId.add(msg.getMessageId());
 						}
 						previousMenu = true;
@@ -86,10 +92,16 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 						e.printStackTrace();
 					}
 				}
-				
+			}	
+		// Case if user sent a text message
+		} else if(update.hasMessage() && update.getMessage().hasText()) {
+			
+			if(update.getMessage().getFrom().getUserName() == null) {
+				log.info("User " + update.getMessage().getFrom().getFirstName() + " is accessing the bot!");
+			} else {
+				log.info("@" + update.getMessage().getFrom().getUserName() + " is accessing the bot!");
 			}
 			
-		} else if(update.hasMessage() && update.getMessage().hasText()) {
 			SendMessage message = handler.handleTextUpdate(update);
 			try {
 				execute(message);
@@ -120,9 +132,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 																.messageId(previousMenuId)
 																.build();
 				execute(deleteMessage);
-			} catch (Exception e) {
-				
-			}
+			} catch (Exception e) {	}
 			
 			try {
 				for(Integer messageId: previousMenusId) {
@@ -133,9 +143,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 					
 					execute(deleteMessage);
 				}
-			} catch (Exception e) {
-
-			}
+			} catch (Exception e) { }
 			
 			previousMenu = false;
 		}
