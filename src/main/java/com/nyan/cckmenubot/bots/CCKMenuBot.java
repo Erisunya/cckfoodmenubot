@@ -18,6 +18,9 @@ import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class CCKMenuBot extends TelegramLongPollingBot{
 	
@@ -75,7 +78,18 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 			} catch (TelegramApiException e) {
 				e.printStackTrace();
 			} 
-		} 
+		} else {
+			log.info(update.getMessage().getFrom().getFirstName() + " sent a message of unknown type.");
+			SendMessage  message = new SendMessage().builder()
+												.text("Sorry, but I don't recognise what you just sent :'(\n\nWhy not try pressing /menu instead?")
+												.chatId(update.getMessage().getChatId())
+												.build();
+			try {
+				execute(message);
+			} catch (TelegramApiException e) {
+				e.printStackTrace();
+			} 
+		}
 
 		System.out.println("Update processed!");
 	}

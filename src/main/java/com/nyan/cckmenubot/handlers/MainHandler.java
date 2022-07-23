@@ -9,11 +9,13 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 @Component
 public class MainHandler {
 	
@@ -45,10 +47,11 @@ public class MainHandler {
 			feedbackMode = true;
 			return feedbackHandler.newFeedback(update);
 		}  else {
+			log.info(update.getMessage().getFrom().getFirstName() + " sent a message of unknown type.");
 			return new SendMessage().builder()
-					.text("Sorry, but I don't recognise what you just said :'(\n\nWhy not try pressing /menu instead?")
-					.chatId(update.getMessage().getChatId())
-					.build();
+									.text("Sorry, but I don't recognise what you just sent :'(\n\nWhy not try pressing /menu instead?")
+									.chatId(update.getMessage().getChatId())
+									.build();
 		}
 	}
 	
