@@ -58,17 +58,12 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 				log.info("@" + update.getCallbackQuery().getFrom().getUserName() + " has pressed a button!");
 			}
 			
-			if(update.getCallbackQuery().getData().contains("location")) {
-				EditMessageText message = handler.handleLocationUpdate(update);
-				try {
-					execute(message);
-				} catch (TelegramApiException e) {
-					e.printStackTrace();
-				}
-			} else if(update.getCallbackQuery().getData().contains("stall")) {
+			if(update.getCallbackQuery().getData().contains("stall")) {
+				// CallbackData is a String in the format "location;(location name);stall;(stall name)"
 				String[] callDataArray = update.getCallbackQuery().getData().split(";");
-				String callData = callDataArray[1];
-				if(photoRepository.findByStallName(callData).size() < 2) {
+				String locationName = callDataArray[1];
+				String stallName = callDataArray[3];
+				if(photoRepository.findByStallNameAndLocationName(stallName, locationName).size() < 2) {
 					SendPhoto message = handler.handleStallUpdate(update);
 					try {
 						Message sentMessage = execute(message);
@@ -92,7 +87,15 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 						e.printStackTrace();
 					}
 				}
-			}	
+			} else if (update.getCallbackQuery().getData().contains("location")) {
+				EditMessageText message = handler.handleLocationUpdate(update);
+				try {
+					execute(message);
+				} catch (TelegramApiException e) {
+					e.printStackTrace();
+				}
+			}
+			
 		// Case if user sent a text message
 		} else if(update.hasMessage() && update.getMessage().hasText()) {
 			

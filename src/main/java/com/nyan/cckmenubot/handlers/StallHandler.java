@@ -27,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class StallHandler {
 	
-	private String callData;
 	private long chatId;
 	private int messageId;
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
@@ -37,20 +36,22 @@ public class StallHandler {
 	
 	public SendPhoto handleUpdate(Update update) {
 		
+		// CallbackData is a String in the format "location;(location name);stall;(stall name)"
 		String[] callDataArray = update.getCallbackQuery().getData().split(";");
-		callData = callDataArray[1];
+		String locationName = callDataArray[1];
+		String stallName = callDataArray[3];
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		
 		if(update.getCallbackQuery().getFrom().getUserName() == null) {
-			log.info("Displaying menu from " + callData + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
+			log.info("Displaying menu from " + stallName + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
 		} else {
-			log.info("Displaying menu from " + callData + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
+			log.info("Displaying menu from " + stallName + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
 		}
 		
 		String fileId = null;
 		Date caption = null;
-		for(Photo photo: photoRepository.findByStallName(callData)) {
+		for(Photo photo: photoRepository.findByStallNameAndLocationName(stallName, locationName)) {
 			fileId = photo.getFileId();
 			caption = photo.getLastUpdatedTime();
 		}
@@ -58,7 +59,7 @@ public class StallHandler {
 		SendPhoto message = new SendPhoto().builder()
 								.chatId(chatId)
 								.photo(new InputFile(fileId))
-								.caption(callData + " - last updated on " + formatter.format(caption))
+								.caption(stallName + " - last updated on " + formatter.format(caption))
 								.build();
 										
 		return message;
@@ -66,27 +67,29 @@ public class StallHandler {
 	
 	public SendMediaGroup handleUpdateMultiple(Update update) {
 		
+		// CallbackData is a String in the format "location;(location name);stall;(stall name)"
 		String[] callDataArray = update.getCallbackQuery().getData().split(";");
-		callData = callDataArray[1];
+		String locationName = callDataArray[1];
+		String stallName = callDataArray[3];
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		
 		if(update.getCallbackQuery().getFrom().getUserName() == null) {
-			log.info("Displaying menus from " + callData + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
+			log.info("Displaying menus from " + stallName + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
 		} else {
-			log.info("Displaying menus from " + callData + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
+			log.info("Displaying menus from " + stallName + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
 		}
 				
 		String fileId = null;
 		List<InputMedia> photosList = new ArrayList<>();
-		for(Photo photo: photoRepository.findByStallName(callData)) {
+		for(Photo photo: photoRepository.findByStallNameAndLocationName(stallName, locationName)) {
 			fileId = photo.getFileId();
 			Date caption = photo.getLastUpdatedTime();
 			InputMediaPhoto inputPhoto = new InputMediaPhoto().builder()
 												.media(fileId)
 												.build();
 			if(photosList.isEmpty()) {
-				inputPhoto.setCaption(callData + " - last updated on " + formatter.format(caption));
+				inputPhoto.setCaption(stallName + " - last updated on " + formatter.format(caption));
 			}
 			photosList.add(inputPhoto);
 		}

@@ -33,6 +33,7 @@ public class LocationHandler {
 
 	public EditMessageText handleUpdate(Update update) {
 		
+		// CallbackData is a String in the format "location;(location name)"
 		String[] callDataArray = update.getCallbackQuery().getData().split(";");
 		callData = callDataArray[1];
 		chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -58,8 +59,8 @@ public class LocationHandler {
 			messageText.append("\n- " + stall.getStallName());
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());
-			// CallbackData is a String in the format "stall;(stall name)"
-			button.setCallbackData("stall;" + stall.getStallName());
+			// CallbackData is a String in the format "location;(location name);stall;(stall name)"
+			button.setCallbackData(update.getCallbackQuery().getData()+";stall;" + stall.getStallName());
 			
 			// Splits the buttons into rows of two
 			if(rowInline.size()>=2) {

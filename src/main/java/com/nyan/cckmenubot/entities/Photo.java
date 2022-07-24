@@ -27,6 +27,8 @@ public class Photo {
 	private String stallName;
 	@Column(name = "file_id")
 	private String fileId;
+	@Column(name = "location_name")
+	private String locationName;
 	@Column(name = "created_time")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdTime;

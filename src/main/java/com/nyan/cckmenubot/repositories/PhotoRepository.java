@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Integer>{
 
-	List<Photo> findByStallName(String stallName);
+	List<Photo> findByStallNameAndLocationName(String stallName, String locationName);
 
 	
 }
