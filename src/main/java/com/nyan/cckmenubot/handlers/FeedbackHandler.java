@@ -35,7 +35,12 @@ public class FeedbackHandler {
 
 	public SendMessage receivedFeedback(Update update) {
 		
-		log.info("User " + update.getMessage().getFrom().getFirstName() + " has provided some feedback.");;
+		if(update.getMessage().getFrom().getUserName() == null) {
+			log.info("User " + update.getMessage().getFrom().getFirstName() + " has provided some feedback.");;
+		} else {
+			log.info("@" + update.getMessage().getFrom().getUserName() + " has provided some feedback.");
+		}
+		
 		
 		Feedback feedback = new Feedback();
 		feedback.setFeedback(update.getMessage().getText());
