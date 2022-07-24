@@ -48,9 +48,9 @@ public class MenuHandler {
 		// Each list item corresponds to one keyboard button
 		List<InlineKeyboardButton> rowInline = new ArrayList<InlineKeyboardButton>();
 		
-		/* Iterates over all locations in the locations database and
-		   creates and adds a new keyboard button for each location to
-		   the list of keyboard buttons */
+		// Iterates over all locations in the locations database and
+		// creates and adds a new keyboard button for each location to
+		// the list of keyboard buttons
 		for(Location location: locationRepository.findAllByOrderByLocationName()) {
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(location.getLocationName());

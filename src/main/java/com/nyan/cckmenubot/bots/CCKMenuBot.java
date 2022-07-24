@@ -52,7 +52,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 		// Case if user clicked on any button
 		if (update.hasCallbackQuery()) {
 			
-			if(update.getCallbackQuery().getMessage().getFrom().getUserName() == null) {
+			if(update.getCallbackQuery().getFrom().getUserName() == null) {
 				log.info("User " + update.getCallbackQuery().getFrom().getFirstName() + " has pressed a button!");
 			} else {
 				log.info("@" + update.getCallbackQuery().getFrom().getUserName() + " has pressed a button!");
