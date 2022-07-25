@@ -3,6 +3,7 @@ package com.nyan.cckmenubot.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nyan.cckmenubot.entities.Location;
 import com.nyan.cckmenubot.entities.Stall;
 import com.nyan.cckmenubot.repositories.LocationRepository;
 import com.nyan.cckmenubot.repositories.StallRepository;
@@ -24,18 +25,19 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class LocationHandler {
 
-	private String callData;
+	private String locationName;
 	private long chatId;
 	private int messageId;
-
+	@Autowired
+	private LocationRepository locationRepository;
 	@Autowired
 	private StallRepository stallRepository;
 
 	public EditMessageText handleUpdate(Update update) {
 		
-		// CallbackData is a String in the format "location;(location name)"
+		// CallbackData is a String in the format "location;(locationId in locations)"
 		String[] callDataArray = update.getCallbackQuery().getData().split(";");
-		callData = callDataArray[1];
+		locationName = locationRepository.findFirstByLocationId(Integer.parseInt(callDataArray[1])).getLocationName();
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 
@@ -46,22 +48,21 @@ public class LocationHandler {
 		List<InlineKeyboardButton> rowInline = new ArrayList<InlineKeyboardButton>();
 		
 		if(update.getCallbackQuery().getFrom().getUserName() == null) {
-			log.info("Displaying stalls from " + callData + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
+			log.info("Displaying stalls from " + locationName + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
 		} else {
-			log.info("Displaying stalls from " + callData + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
+			log.info("Displaying stalls from " + locationName + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
 		}
 		
 		StringBuilder messageText = new StringBuilder();
-		messageText.append("Choose one of these stalls in " + callData + " to view its menu:");
+		messageText.append("Choose one of these stalls in " + locationName + " to view its menu:");
 
 		// Implement logic to show stalls once location is selected
-		for (Stall stall : stallRepository.findByLocationNameOrderByStallName(callData)) {
+		for (Stall stall : stallRepository.findByLocationNameOrderByStallName(locationName)) {
 			messageText.append("\n- " + stall.getStallName());
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());
-			// CallbackData is a String in the format "location;(location name);stall;(stall name)"
-			// ***CALLBACKDATA CAN ONLY HOLD A MAXIMUM OF 64 CHARACTERS***
-			button.setCallbackData(update.getCallbackQuery().getData() + ";stall;" + stall.getStallName());
+			// CallbackData is a String in the format "stall;(stallId in stalls)"
+			button.setCallbackData("stall;" + stall.getStallId());
 			
 			// Splits the buttons into rows of two
 			if(rowInline.size()>=2) {

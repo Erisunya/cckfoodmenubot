@@ -13,4 +13,6 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 		
 	List<Location> findAllByOrderByLocationName();
 	
+	Location findFirstByLocationId(int locationId);
+	
 }

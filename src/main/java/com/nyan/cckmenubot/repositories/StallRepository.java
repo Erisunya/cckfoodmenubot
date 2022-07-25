@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface StallRepository extends JpaRepository<Stall, Integer>{
 	
 	List<Stall> findByLocationNameOrderByStallName(String locationName);
+	
+	Stall findFirstByStallId(int stallId);
 
 }

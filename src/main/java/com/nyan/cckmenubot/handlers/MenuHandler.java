@@ -54,8 +54,8 @@ public class MenuHandler {
 		for(Location location: locationRepository.findAllByOrderByLocationName()) {
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(location.getLocationName());
-			// CallbackData is a String in the format "location;(location name)"
-			button.setCallbackData("location;" + location.getLocationName());
+			// CallbackData is a String in the format "location;(locationId in locations)"
+			button.setCallbackData("location;" + location.getLocationId());
 			
 			if(rowInline.size()>=2) {
 				rowsInline.add(rowInline);

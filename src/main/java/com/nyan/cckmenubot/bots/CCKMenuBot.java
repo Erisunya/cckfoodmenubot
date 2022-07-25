@@ -6,6 +6,7 @@ import java.util.List;
 import com.nyan.cckmenubot.config.BotConfig;
 import com.nyan.cckmenubot.handlers.MainHandler;
 import com.nyan.cckmenubot.repositories.PhotoRepository;
+import com.nyan.cckmenubot.repositories.StallRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,8 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 	@Autowired
 	private MainHandler handler;
 	@Autowired
+	private StallRepository stallRepository;
+	@Autowired
 	private PhotoRepository photoRepository;
 	private boolean previousMenu = false;
 	private int previousMenuId;
@@ -51,6 +54,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 		
 		// Case if user clicked on any button
 		if (update.hasCallbackQuery()) {
+			
 			if(update.getCallbackQuery().getFrom().getUserName() == null) {
 				log.info("User " + update.getCallbackQuery().getFrom().getFirstName() + " has pressed a button!");
 			} else {
@@ -58,10 +62,10 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 			}
 			
 			if(update.getCallbackQuery().getData().contains("stall")) {
-				// CallbackData is a String in the format "location;(location name);stall;(stall name)"
+				// CallbackData is a String in the format "stall;(stallId in stalls)"
 				String[] callDataArray = update.getCallbackQuery().getData().split(";");
-				String locationName = callDataArray[1];
-				String stallName = callDataArray[3];
+				String locationName = stallRepository.findFirstByStallId(Integer.parseInt(callDataArray[1])).getLocationName();
+				String stallName = stallRepository.findFirstByStallId(Integer.parseInt(callDataArray[1])).getStallName();
 				if(photoRepository.findByStallNameAndLocationName(stallName, locationName).size() < 2) {
 					SendPhoto message = handler.handleStallUpdate(update);
 					try {
@@ -88,7 +92,6 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 				}
 			} else if (update.getCallbackQuery().getData().contains("location")) {
 				EditMessageText message = handler.handleLocationUpdate(update);
-				
 				try {
 					execute(message);
 				} catch (TelegramApiException e) {

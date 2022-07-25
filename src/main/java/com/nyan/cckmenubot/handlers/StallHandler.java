@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.nyan.cckmenubot.entities.Photo;
 import com.nyan.cckmenubot.repositories.PhotoRepository;
+import com.nyan.cckmenubot.repositories.StallRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,16 +31,17 @@ public class StallHandler {
 	private long chatId;
 	private int messageId;
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); 
-	
+	@Autowired
+	private StallRepository stallRepository;
 	@Autowired
 	private PhotoRepository photoRepository;
 	
 	public SendPhoto handleUpdate(Update update) {
 		
-		// CallbackData is a String in the format "location;(location name);stall;(stall name)"
+		// CallbackData is a String in the format "stall;(stallId)"
 		String[] callDataArray = update.getCallbackQuery().getData().split(";");
-		String locationName = callDataArray[1];
-		String stallName = callDataArray[3];
+		String locationName = stallRepository.findFirstByStallId(Integer.parseInt(callDataArray[1])).getLocationName();
+		String stallName = stallRepository.findFirstByStallId(Integer.parseInt(callDataArray[1])).getStallName();
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		
@@ -67,10 +69,10 @@ public class StallHandler {
 	
 	public SendMediaGroup handleUpdateMultiple(Update update) {
 		
-		// CallbackData is a String in the format "location;(location name);stall;(stall name)"
+		// CallbackData is a String in the format "stall;(stallId)"
 		String[] callDataArray = update.getCallbackQuery().getData().split(";");
-		String locationName = callDataArray[1];
-		String stallName = callDataArray[3];
+		String locationName = stallRepository.findFirstByStallId(Integer.parseInt(callDataArray[1])).getLocationName();
+		String stallName = stallRepository.findFirstByStallId(Integer.parseInt(callDataArray[1])).getStallName();
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		

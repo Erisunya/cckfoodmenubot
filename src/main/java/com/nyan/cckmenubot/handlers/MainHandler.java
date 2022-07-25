@@ -56,7 +56,7 @@ public class MainHandler {
 					.text("Hey! You're not supposed to be here...unless someone told you to come here? ( ≧Д≦)")
 					.chatId(update.getMessage().getChatId())
 					.build();
-		}else {
+		} else {
 			log.info(update.getMessage().getFrom().getFirstName() + " sent a message of unknown type.");
 			return new SendMessage().builder()
 									.text("Sorry, but I don't recognise what you just sent :'(\n\nWhy not try pressing /menu instead?")
