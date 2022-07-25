@@ -50,7 +50,13 @@ public class MainHandler {
 		} else if (messageText.equals("/feedback")) {
 			feedbackMode = true;
 			return feedbackHandler.newFeedback(update);
-		}  else {
+		} else if (messageText.equals("/nyanism")) { 
+			log.info(update.getMessage().getFrom().getFirstName() + " found your secret command!");
+			return new SendMessage().builder()
+					.text("Hey! You're not supposed to be here...unless someone told you to come here? ( ≧Д≦)")
+					.chatId(update.getMessage().getChatId())
+					.build();
+		}else {
 			log.info(update.getMessage().getFrom().getFirstName() + " sent a message of unknown type.");
 			return new SendMessage().builder()
 									.text("Sorry, but I don't recognise what you just sent :'(\n\nWhy not try pressing /menu instead?")

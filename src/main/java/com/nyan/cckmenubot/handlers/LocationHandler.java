@@ -60,7 +60,8 @@ public class LocationHandler {
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());
 			// CallbackData is a String in the format "location;(location name);stall;(stall name)"
-			button.setCallbackData(update.getCallbackQuery().getData()+";stall;" + stall.getStallName());
+			// ***CALLBACKDATA CAN ONLY HOLD A MAXIMUM OF 64 CHARACTERS***
+			button.setCallbackData(update.getCallbackQuery().getData() + ";stall;" + stall.getStallName());
 			
 			// Splits the buttons into rows of two
 			if(rowInline.size()>=2) {

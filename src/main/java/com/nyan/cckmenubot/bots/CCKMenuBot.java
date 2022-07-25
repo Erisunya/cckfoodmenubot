@@ -51,7 +51,6 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 		
 		// Case if user clicked on any button
 		if (update.hasCallbackQuery()) {
-			
 			if(update.getCallbackQuery().getFrom().getUserName() == null) {
 				log.info("User " + update.getCallbackQuery().getFrom().getFirstName() + " has pressed a button!");
 			} else {
@@ -89,6 +88,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 				}
 			} else if (update.getCallbackQuery().getData().contains("location")) {
 				EditMessageText message = handler.handleLocationUpdate(update);
+				
 				try {
 					execute(message);
 				} catch (TelegramApiException e) {
