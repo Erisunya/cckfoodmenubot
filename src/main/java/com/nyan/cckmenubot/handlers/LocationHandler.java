@@ -58,10 +58,9 @@ public class LocationHandler {
 
 		// Implement logic to show stalls once location is selected
 		for (Stall stall : stallRepository.findByLocationNameOrderByStallName(locationName)) {
+			messageText.append("\n- " + stall.getStallName());
 			if(isStallHalal(stall).equals("Y")) {
-				messageText.append("\n- " + stall.getStallName() + " (H)");
-			} else {
-				messageText.append("\n- " + stall.getStallName());
+				messageText.append(" (H)");
 			}
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());
