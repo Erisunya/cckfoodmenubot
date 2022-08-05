@@ -31,7 +31,7 @@ public class Stall {
 	private String stallName;
 	@Column(name = "location_name")
 	private String locationName;
-	
-	
+	@Column(name = "halal")
+	private String halalStatus;
 	
 }

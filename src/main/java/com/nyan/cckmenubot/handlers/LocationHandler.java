@@ -58,7 +58,11 @@ public class LocationHandler {
 
 		// Implement logic to show stalls once location is selected
 		for (Stall stall : stallRepository.findByLocationNameOrderByStallName(locationName)) {
-			messageText.append("\n- " + stall.getStallName());
+			if(isStallHalal(stall).equals("Y")) {
+				messageText.append("\n- " + stall.getStallName() + " (H)");
+			} else {
+				messageText.append("\n- " + stall.getStallName());
+			}
 			InlineKeyboardButton button = new InlineKeyboardButton();
 			button.setText(stall.getStallName());
 			// CallbackData is a String in the format "stall;(stallId in stalls)"
@@ -76,7 +80,7 @@ public class LocationHandler {
 		
 		rowsInline.add(rowInline);
 		
-		messageText.append("\n\n<i>Note that the prices reflected in the menus may not be up to date.</i>");
+		messageText.append("\n\n<i>Note that the prices reflected in the menus may not be up to date.\n(H) denotes <b>known</b> halal options.</i>");
 
 		markupInline.setKeyboard(rowsInline);
 
@@ -89,6 +93,11 @@ public class LocationHandler {
 													.build();
 
 		return message;
+	}
+
+	private String isStallHalal(Stall stall) {
+		
+		return stall.getHalalStatus();
 	}
 
 }

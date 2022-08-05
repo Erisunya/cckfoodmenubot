@@ -45,28 +45,26 @@ public class StallHandler {
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		
-		if(update.getCallbackQuery().getFrom().getUserName() == null) {
-			log.info("Displaying menu from " + stallName + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
-		} else {
-			log.info("Displaying menu from " + stallName + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
-		}
-		
+		showDisplayMenuLogMessage(update, stallName);
+				
 		String fileId = null;
-		Date caption = null;
+		String caption = null;
 		for(Photo photo: photoRepository.findByStallNameAndLocationName(stallName, locationName)) {
 			fileId = photo.getFileId();
-			caption = photo.getLastUpdatedTime();
+			caption = createPhotoCaption(photo, stallName);
 		}
 		
 		SendPhoto message = new SendPhoto().builder()
 								.chatId(chatId)
 								.photo(new InputFile(fileId))
-								.caption(stallName + " - last updated on " + formatter.format(caption))
+								.caption(caption)
+								.parseMode("HTML")
 								.build();
 										
 		return message;
 	}
 	
+
 	public SendMediaGroup handleUpdateMultiple(Update update) {
 		
 		// CallbackData is a String in the format "stall;(stallId)"
@@ -76,22 +74,18 @@ public class StallHandler {
 		chatId = update.getCallbackQuery().getMessage().getChatId();
 		messageId = update.getCallbackQuery().getMessage().getMessageId();
 		
-		if(update.getCallbackQuery().getFrom().getUserName() == null) {
-			log.info("Displaying menus from " + stallName + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
-		} else {
-			log.info("Displaying menus from " + stallName + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
-		}
+		showDisplayMenuLogMessage(update, stallName);
 				
 		String fileId = null;
 		List<InputMedia> photosList = new ArrayList<>();
 		for(Photo photo: photoRepository.findByStallNameAndLocationName(stallName, locationName)) {
 			fileId = photo.getFileId();
-			Date caption = photo.getLastUpdatedTime();
 			InputMediaPhoto inputPhoto = new InputMediaPhoto().builder()
 												.media(fileId)
+												.parseMode("HTML")
 												.build();
 			if(photosList.isEmpty()) {
-				inputPhoto.setCaption(stallName + " - last updated on " + formatter.format(caption));
+				inputPhoto.setCaption(createPhotoCaption(photo, stallName));
 			}
 			photosList.add(inputPhoto);
 		}
@@ -103,4 +97,24 @@ public class StallHandler {
 		return message;
 	}
 	
+	private void showDisplayMenuLogMessage(Update update, String stallName) {
+		if(update.getCallbackQuery().getFrom().getUserName() == null) {
+			log.info("Displaying menu from " + stallName + " as requested by user " + update.getCallbackQuery().getFrom().getFirstName() + ".");
+		} else {
+			log.info("Displaying menu from " + stallName + " as requested by @" + update.getCallbackQuery().getFrom().getUserName() + ".");
+		}
+	}
+	
+	private String createPhotoCaption(Photo photo, String stallName) {
+		String messageText = "<b>" + stallName + "</b>\n";
+		messageText += "Last updated on: " + formatter.format(photo.getLastUpdatedTime()) + "\n";
+		
+		String halalStatus = stallRepository.findFirstByStallName(stallName).getHalalStatus();
+		if(halalStatus.equals("N")) {
+			messageText += "Halal: No\n";
+		} else if (halalStatus.equals("Y")) {
+			messageText += "Halal: Yes\n";
+		}
+		return messageText;
+	}
 }

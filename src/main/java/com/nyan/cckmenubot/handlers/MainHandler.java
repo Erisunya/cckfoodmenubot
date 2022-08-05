@@ -37,7 +37,7 @@ public class MainHandler {
 		// feedbackMode=true would mean that the user has provided some feedback as their text message]
 		//
 		// !Character.toString(messageText.charAt(0)).equals("/") allows users to escape feedback mode
-		// if they pressed /feedback by accident
+		// if they pressed /feedback by accident by pressing /menu
 		if(feedbackMode && !Character.toString(messageText.charAt(0)).equals("/")) {
 			feedbackMode = false;
 			return feedbackHandler.receivedFeedback(update);

@@ -51,7 +51,7 @@ public class CCKMenuBot extends TelegramLongPollingBot{
 	@Override
 	public void onUpdateReceived(Update update) {
 		System.out.println("Update received!");
-		
+
 		// Case if user clicked on any button
 		if (update.hasCallbackQuery()) {
 			

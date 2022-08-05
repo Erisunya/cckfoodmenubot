@@ -13,5 +13,7 @@ public interface StallRepository extends JpaRepository<Stall, Integer>{
 	List<Stall> findByLocationNameOrderByStallName(String locationName);
 	
 	Stall findFirstByStallId(int stallId);
+	
+	Stall findFirstByStallName(String stallName);
 
 }
